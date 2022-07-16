@@ -1,8 +1,6 @@
-const hostname = '127.0.0.1';
-const port = 5000;
-
 const express = require('express')
 const app = express()
+const { server1, server2 } = require("./config")
 
 app.get('/ping', function (req, res) {
   res.send('pong\n')
@@ -11,8 +9,8 @@ app.get('/ping', function (req, res) {
 const ping = () => {
   const http = require('http');
   const options = {
-    hostname: 'localhost',
-    port: 3000,
+    hostname: server1.hostname,
+    port: server1.port,
     path: '/ping',
     method: 'GET',
   };
@@ -33,6 +31,6 @@ setInterval(() => {
   ping();
 }, 5000);
 
-app.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
+app.listen(server2.port, server2.hostname, () => {
+  console.log(`Server running at http://${server2.hostname}:${server2.port}/`);
 });
