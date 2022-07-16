@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    webserver: simple-node-server
+  name: simple-node-server
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      webserver: simple-node-server
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        webserver: simple-node-server
+      name: simple-node-server
+    spec:
+      containers:
+      - name: main 
+        image: nginx:alpine
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        resources: {}
+        volumeMounts:
+        - mountPath: /usr/share/nginx/html
+          name: html
+          readOnly: true
+      - name: git-sync
+        image: openweb/git-sync
+        imagePullPolicy: Always
+        env:
+        - name: GIT_SYNC_REPO
+          value: https://github.com/luksa/simple-node-server-example.git
+        - name: GIT_SYNC_DEST
+          value: /gitrepo
+        - name: GIT_SYNC_BRANCH
+          value: master
+        - name: GIT_SYNC_REV
+          value: FETCH_HEAD
+        - name: GIT_SYNC_WAIT
+          value: "10"
+        resources: {}
+        volumeMounts:
+        - mountPath: /gitrepo
+          name: html
+      volumes:
+      - emptyDir: {}
+        name: html

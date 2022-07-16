@@ -1,0 +1,6 @@
+apiVersion: extensions.example.com/v1
+kind: Website
+metadata:
+  name: SimpleNodeServer
+spec:
+  gitRepo: https://github.com/atosinu/simple-node-server.git
